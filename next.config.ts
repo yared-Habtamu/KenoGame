@@ -1,22 +1,26 @@
 import type { NextConfig } from "next";
 import path from "node:path";
 
-const LOADER = path.resolve(__dirname, 'src/visual-edits/component-tagger-loader.js');
+const LOADER = path.resolve(
+  __dirname,
+  "src/visual-edits/component-tagger-loader.js"
+);
 
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**',
+        protocol: "https",
+        hostname: "**",
       },
       {
-        protocol: 'http',
-        hostname: '**',
+        protocol: "http",
+        hostname: "**",
       },
     ],
   },
-  outputFileTracingRoot: path.resolve(__dirname, '../../'),
+  // outputFileTracingRoot removed: using default tracing root to avoid
+  // incorrect path resolution on hosting platforms (e.g. Vercel).
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -26,10 +30,10 @@ const nextConfig: NextConfig = {
   turbopack: {
     rules: {
       "*.{jsx,tsx}": {
-        loaders: [LOADER]
-      }
-    }
-  }
+        loaders: [LOADER],
+      },
+    },
+  },
 };
 
 export default nextConfig;
