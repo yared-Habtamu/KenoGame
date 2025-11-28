@@ -51,9 +51,10 @@ export default function KenoGrid({
               : {}
           }
           style={{
-            boxShadow: selectedNumbers.includes(num) || drawnNumbers.includes(num)
-              ? "0 0 20px rgba(251, 191, 36, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.3)"
-              : "inset 0 2px 4px rgba(0, 0, 0, 0.3)",
+            boxShadow:
+              selectedNumbers.includes(num) || drawnNumbers.includes(num)
+                ? "0 0 20px rgba(251, 191, 36, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.3)"
+                : "inset 0 2px 4px rgba(0, 0, 0, 0.3)",
           }}
         >
           {num}

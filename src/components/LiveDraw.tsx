@@ -8,38 +8,51 @@ interface LiveDrawProps {
   selectedNumbers: number[];
   onDrawComplete: (drawnNumbers: number[]) => void;
   testMode?: boolean;
+  onBallDrawn?: (num: number) => void;
+  drawSequence?: number[];
 }
 
 export default function LiveDraw({
   selectedNumbers,
   onDrawComplete,
   testMode = false,
+  onBallDrawn,
+  drawSequence = [],
 }: LiveDrawProps) {
   const [drawnNumbers, setDrawnNumbers] = useState<number[]>([]);
   const [currentBall, setCurrentBall] = useState<number | null>(null);
   const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
-    // Generate 20 random unique numbers from 1-80
-    const allNumbers = Array.from({ length: 80 }, (_, i) => i + 1);
-    const shuffled = [...allNumbers].sort(() => Math.random() - 0.5);
-    const drawn = shuffled.slice(0, 20);
+    if (!drawSequence || drawSequence.length === 0) return;
+
+    // reset local state
+    setDrawnNumbers([]);
+    setCurrentBall(null);
+    setIsComplete(false);
 
     let index = 0;
-    const interval = setInterval(() => {
-      if (index < drawn.length) {
-        const ball = drawn[index];
-        setCurrentBall(ball);
-        setDrawnNumbers((prev) => [...prev, ball]);
-        index++;
-      } else {
-        setIsComplete(true);
-        clearInterval(interval);
-        setTimeout(() => {
-          onDrawComplete(drawn);
-        }, 2000);
-      }
-    }, testMode ? 200 : 800);
+    const interval = setInterval(
+      () => {
+        if (index < drawSequence.length) {
+          const ball = drawSequence[index];
+          setCurrentBall(ball);
+          setDrawnNumbers((prev) => {
+            if (prev.includes(ball)) return prev;
+            return [...prev, ball];
+          });
+          if (onBallDrawn) onBallDrawn(ball);
+          index++;
+        } else {
+          setIsComplete(true);
+          clearInterval(interval);
+          setTimeout(() => {
+            onDrawComplete(drawSequence);
+          }, 2000);
+        }
+      },
+      testMode ? 200 : 800
+    );
 
     return () => clearInterval(interval);
   }, [onDrawComplete, testMode]);
@@ -68,15 +81,14 @@ export default function LiveDraw({
                   stiffness: 200,
                   damping: 15,
                 }}
-                className="w-32 h-32 rounded-full keno-ball-drawn flex items-center justify-center text-5xl font-bold text-white"
-                style={{
-                  background:
-                    drawnNumbers.length <= 10
-                      ? "linear-gradient(145deg, #fbbf24, #f59e0b)"
-                      : "linear-gradient(145deg, #f97316, #ea580c)",
-                }}
+                className="w-32 h-32 rounded-full keno-ball-drawn flex items-center justify-center"
               >
-                {currentBall}
+                <img
+                  src={`/balls5/${currentBall}.png`}
+                  alt={`ball-${currentBall}`}
+                  className="w-3/4 h-3/4 object-contain select-none pointer-events-none"
+                  draggable={false}
+                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -89,29 +101,23 @@ export default function LiveDraw({
               key={`${num}-${idx}`}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white"
+              className="w-12 h-12 rounded-full flex items-center justify-center keno-ball-drawn"
               style={{
-                background:
-                  drawnNumbers.indexOf(num) < 10
-                    ? "linear-gradient(145deg, #fbbf24, #f59e0b)"
-                    : "linear-gradient(145deg, #f97316, #ea580c)",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
               }}
             >
-              {num}
+              <img
+                src={`/balls5/${num}.png`}
+                alt={`ball-${num}`}
+                className="w-3/4 h-3/4 object-contain select-none pointer-events-none"
+                draggable={false}
+              />
             </motion.div>
           ))}
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="w-full max-w-4xl keno-card rounded-2xl">
-        <KenoGrid
-          selectedNumbers={selectedNumbers}
-          drawnNumbers={drawnNumbers}
-          selectable={false}
-        />
-      </div>
+      {/* Grid is rendered by parent alongside this component */}
 
       {isComplete && (
         <motion.div

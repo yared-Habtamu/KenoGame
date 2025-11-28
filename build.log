@@ -1,0 +1,30 @@
+
+> app@0.1.0 build C:\Users\hp\Desktop\p\KenoGame
+> next build
+
+   Γû▓ Next.js 15.3.5
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 4.0s
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+   Generating static pages (0/4) ...
+   Generating static pages (1/4) 
+   Generating static pages (2/4) 
+   Generating static pages (3/4) 
+ Γ£ô Generating static pages (4/4)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+Γöî Γùï /                                    41.5 kB         143 kB
+Γöö Γùï /_not-found                            974 B         102 kB
++ First Load JS shared by all             102 kB
+  Γö£ chunks/0324f33a-d1dfe03677631588.js  53.2 kB
+  Γö£ chunks/403-4f3a6a6fb92c9afc.js       46.4 kB
+  Γöö other shared chunks (total)          1.96 kB
+
+
+Γùï  (Static)  prerendered as static content
+

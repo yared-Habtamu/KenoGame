@@ -3,9 +3,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useKenoGame } from "@/hooks/useKenoGame";
 import SelectionScreen from "./SelectionScreen";
+import KenoGrid from "./KenoGrid";
 import LiveDraw from "./LiveDraw";
 import ResultsScreen from "./ResultsScreen";
 import RecentDraws from "./RecentDraws";
+import ShuffleScreen from "./ShuffleScreen";
 import { useState } from "react";
 
 export default function KenoGame() {
@@ -14,9 +16,12 @@ export default function KenoGame() {
     gameState,
     selectedNumbers,
     drawnNumbers,
+    drawSequence,
     drawHistory,
     currentDrawId,
     handleSelectionComplete,
+    proceedToDrawing,
+    addDrawnNumber,
     handleDrawComplete,
     handleResultsComplete,
     handleHistoryComplete,
@@ -54,10 +59,47 @@ export default function KenoGame() {
               exit={{ opacity: 0, scale: 1.1 }}
               transition={{ duration: 0.5 }}
             >
-              <LiveDraw
-                selectedNumbers={selectedNumbers}
-                onDrawComplete={handleDrawComplete}
-                testMode={testMode}
+              <div className="flex flex-col lg:flex-row gap-8 w-full max-w-7xl mx-auto">
+                {/* Left: Grid */}
+                <div className="flex-1">
+                  <div className="keno-card rounded-3xl p-6 shadow-2xl">
+                    {/* show grid with current selected & drawn numbers */}
+                    <KenoGrid
+                      selectedNumbers={selectedNumbers}
+                      drawnNumbers={drawnNumbers}
+                      selectable={false}
+                    />
+                  </div>
+                </div>
+
+                {/* Right: Live draw controls */}
+                <div className="lg:w-80 flex flex-col gap-6">
+                  <LiveDraw
+                    selectedNumbers={selectedNumbers}
+                    drawSequence={drawSequence}
+                    onDrawComplete={handleDrawComplete}
+                    testMode={testMode}
+                    onBallDrawn={addDrawnNumber}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {gameState === "shuffle" && (
+            <motion.div
+              key="shuffle"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <ShuffleScreen
+                src="/videos/shuffle.mp4"
+                onEnded={() => {
+                  // after video finishes, proceed to the drawing screen
+                  proceedToDrawing();
+                }}
               />
             </motion.div>
           )}
